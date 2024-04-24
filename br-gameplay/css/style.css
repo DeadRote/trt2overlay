@@ -27,6 +27,16 @@ video { position: absolute; left: 0; top: 0; }
     width: 1920px; height: 1080px;
 }
 
+#main-logo {
+    position: absolute;
+    top: 53px;
+    left: 303px;
+    background-image: url('../static/logo.png');
+    background-size: 100%;
+    width: 446px;
+    aspect-ratio: 892/79;
+}
+
 /* Top Section */
 #topSection { width: 1920px; height: 152px; }
 

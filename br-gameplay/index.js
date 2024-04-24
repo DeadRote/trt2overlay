@@ -1,5 +1,6 @@
 // Connecting to server
-let socket = new ReconnectingWebSocket("ws://" + location.host + "/ws")
+let socket = new ReconnectingWebSocket("ws://" + location.host + ":24050/ws")
+console.log(loation.host);
 socket.onopen = () => console.log("Successfully Connected")
 socket.onclose = event => {
     console.log("Socket Closed Connection: ", event)
@@ -166,14 +167,14 @@ socket.onmessage = event => {
                 // Map Mod Slot Color
                 currentMapMod = allMaps[i].mod.toUpperCase().slice(0,2)
                 console.log(currentMapMod)
-                switch (currentMapMod.toUpperCase()) {
-                    case "NM": mapModSlot.css("background-color","#919191"); break;
-                    case "HD": mapModSlot.css("background-color","#ffc728"); break;
-                    case "HR": mapModSlot.css("background-color","#f4154b"); break;
-                    case "DT": mapModSlot.css("background-color","#b013f2"); break;
-                    case "FM": mapModSlot.css("background-color","#17b7ff"); break;
-                    case "TB": mapModSlot.css("background-color","#ff1df5"); break;
-                }
+                // switch (currentMapMod.toUpperCase()) {
+                //     case "NM": mapModSlot.css("background-color","#919191"); break;
+                //     case "HD": mapModSlot.css("background-color","#ffc728"); break;
+                //     case "HR": mapModSlot.css("background-color","#f4154b"); break;
+                //     case "DT": mapModSlot.css("background-color","#b013f2"); break;
+                //     case "FM": mapModSlot.css("background-color","#17b7ff"); break;
+                //     case "TB": mapModSlot.css("background-color","#ff1df5"); break;
+                // }
                 
                 // AR
                 currentBaseAR = allMaps[i].metadata.diff_approach
