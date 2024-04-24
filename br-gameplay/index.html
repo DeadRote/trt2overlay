@@ -23,41 +23,56 @@
         <section id="topSection">
             <div id="main-logo"></div>
             <!-- Background -->
-            <section id="topBackground">
-                <div id="topBackgroundOverlay"></div>
-            </section>
+            <div id="mapbox-border"></div>
+            <div id="mapbox">
+                <div class="boxFilter"></div>
+                <section id="mapStatsLeft">
+                    <div class="diffWrapper">
+                        <div class="wrapperName">DIFFICULTY</div>
+                        <div id="currentMapDifficultyWrapper">
+                            <div id="currentMapDifficulty"></div>
+                        </div>
+                    </div>
+                    <div class="diffWrapper">
+                        <div class="wrapperName">LENGTH</div>
+                        <div id="mapLength"></div>
+                    </div>
+                </section>
+                <section id="currentMap">
+                    <div class="boxTitle">Current Map</div>
+                    <div id="currentSongArtistandNameWrapper">
+                        <div id="currentSongArtistandName"></div>
+                    </div>
+                    
+                    <div id="currentMapSetCreator"></div>
+                </section>
+                <section id="mapStatsRight">
+                    <div class="topLineStatBox" id="ARStat">
+                        <div class="mapStatsTexts mapStatsTitle">AR</div>
+                        <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberAR"></div>
+                    </div>
+                    <div class="topLineStatBox" id="CSStat">
+                        <div class="mapStatsTexts mapStatsTitle">OD</div>
+                        <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberOD"></div>
+                    </div>
+                    
+                    <div class="topLineStatBox" id="ODStat">
+                        <div class="mapStatsTexts mapStatsTitle">CS</div>
+                        <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberCS"></div>
+                    </div>
+                    <div class="topLineStatBox" id="BPMStat">
+                        <div class="mapStatsTexts mapStatsTitle">BPM</div>
+                        <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberBPM"></div>
+                    </div>
+                    <!-- <div id="SRStat">5.67*</div> -->
+                    <!-- <div class="mapDetailInformation" id="mapModSlot"></div> -->
+                </section>
+            </div>
             <!-- Current Map Section -->
-            <section id="currentMap">
-                <div id="currentSongArtistandNameWrapper">
-                    <div id="currentSongArtistandName"></div>
-                </div>
-                <div id="currentMapDifficulty"></div>
-                <div id="currentMapSetCreator"></div>
-            </section>
+            
             <!-- Map Stats Left -->
-            <section id="mapStatsLeft">
-                <div class="topLineStatBox" id="ARStat">
-                    <div class="mapStatsTexts mapStatsTitle">AR</div>
-                    <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberAR"></div>
-                </div>
-                <div class="topLineStatBox" id="CSStat">
-                    <div class="mapStatsTexts mapStatsTitle">OD</div>
-                    <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberOD"></div>
-                </div>
-                <div id="SRStat">5.67*</div>
-            </section>
+            
             <!-- Map Stats Right -->
-            <section id="mapStatsRight">
-                <div class="topLineStatBox" id="ODStat">
-                    <div class="mapStatsTexts mapStatsTitle">CS</div>
-                    <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberCS"></div>
-                </div>
-                <div class="topLineStatBox" id="BPMStat">
-                    <div class="mapStatsTexts mapStatsTitle">BPM</div>
-                    <div class="mapStatsTexts mapStatsNumber" id="mapStatNumberBPM"></div>
-                </div>
-                <!-- <div class="mapDetailInformation" id="mapModSlot"></div> -->
-            </section>
         </section>
 
         <!-- Bottom Section -->
@@ -95,15 +110,6 @@
             <!-- Chat -->
             <!-- <div id="chatDisplay"></div> -->
         </section>
-    </div>
-	<div id="controlPanel">
-		<!-- Commentators -->
-		<section id="controlPanelCommentators">
-			<div class="controlPanelText">Enter the commentator<br>names here - enter 'empty' to remove the commentator</div>
-			<input class="controlPanelItems controlPanelInput" type="text" id="commentatorNameInput1">
-			<input class="controlPanelItems controlPanelInput" type="text" id="commentatorNameInput2">
-			<button class="controlPanelItems" id="changeCommentatorNames" onclick="changeCommentatorNames()">Change Commentator Names</button>
-		</section>
     </div>
     <script src="index.js"></script>
 </body>

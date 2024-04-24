@@ -1,6 +1,5 @@
 // Connecting to server
-let socket = new ReconnectingWebSocket("ws://" + location.host + ":24050/ws")
-console.log(loation.host);
+let socket = new ReconnectingWebSocket("ws://" + location.host + "/ws")
 socket.onopen = () => console.log("Successfully Connected")
 socket.onclose = event => {
     console.log("Socket Closed Connection: ", event)
@@ -14,11 +13,13 @@ let mapStatNumberOD = $("#mapStatNumberOD")
 let SRStat = $("#SRStat")
 let mapStatNumberCS = $("#mapStatNumberCS")
 let mapStatNumberBPM = $("#mapStatNumberBPM")
-let mapModSlot = $("#mapModSlot")
+let mapModSlot = $("#mapModSlot");
+let mapLength = $('#mapLength')
 let currentBaseAR 
 let currentBaseOD 
 let currentBaseCS 
 let currentBaseBPM
+let currentLength
 let currentAR
 let currentOD
 let currentSR
@@ -38,7 +39,7 @@ let currentSongID
 let poolMapFound = false
 
 // Map Background
-let topBackground = $("#topBackground")
+let topBackground = $("#mapbox")
 let currentSongSetID
 
 // Player IDs
@@ -105,22 +106,14 @@ let commentatorName2 = document.getElementById("commentatorName2")
 let ipcState
 let resetScores
 
-// Current Pool
-let allMaps
-let poolInformationRequest = new XMLHttpRequest()
-poolInformationRequest.open("GET","https://trt2.btmc.live/api/maps/all", false)
-poolInformationRequest.onreadystatechange = function() {
-    if (this.status >= 400) { console.error(this.statusText); return;}
-    if (this.readyState != 4) return
-    allMaps = JSON.parse(this.responseText)
 
-    for (let i = 0; i < allMaps.length; i++) {
-        allMaps[i].metadata = JSON.parse(allMaps[i].metadata)
-    }
-    console.log(allMaps)
-    currentSongID = 0
+let calculateLength = (length) => {
+    let result;
+    let minutes = parseInt(Math.floor(length/1000/60));
+    let seconds = parseInt(Math.round((length/1000) - (minutes*60)));
+    if(seconds < 10) seconds = seconds.toString() + '0';
+    return `${minutes}:${seconds}`;
 }
-poolInformationRequest.send()
 
 // Calculate AR and OD
 let calculateARandOD = (baseNumber, mod) => {
@@ -151,124 +144,73 @@ let playerScoreAnimation = {}
 socket.onmessage = event => {
     let data = JSON.parse(event.data)
 
-    if (currentSongID != data.menu.bm.id) {
-        currentSongID = data.menu.bm.id
-        poolMapFound = false
-        mapModSlot.css("display", "none")
+    // console.log(data);
+    // console.log(data);
 
-        for (let i = 0; i < allMaps.length; i++) {
-            if (allMaps[i].osuMapId == currentSongID) {
-                poolMapFound = true
-                mapModSlot.css("display","block")
-                mapModSlot.text(allMaps[i].mod)
-                currentSR = allMaps[i].postModSr
-                animation.SRStat.update(currentSR)
-
-                // Map Mod Slot Color
-                currentMapMod = allMaps[i].mod.toUpperCase().slice(0,2)
-                console.log(currentMapMod)
-                // switch (currentMapMod.toUpperCase()) {
-                //     case "NM": mapModSlot.css("background-color","#919191"); break;
-                //     case "HD": mapModSlot.css("background-color","#ffc728"); break;
-                //     case "HR": mapModSlot.css("background-color","#f4154b"); break;
-                //     case "DT": mapModSlot.css("background-color","#b013f2"); break;
-                //     case "FM": mapModSlot.css("background-color","#17b7ff"); break;
-                //     case "TB": mapModSlot.css("background-color","#ff1df5"); break;
-                // }
-                
-                // AR
-                currentBaseAR = allMaps[i].metadata.diff_approach
-                animation.mapStatNumberAR.update(currentBaseAR)
-                // OD
-                currentBaseOD = allMaps[i].metadata.diff_overall
-                animation.mapStatNumberOD.update(currentBaseOD)
-                // CS
-                currentBaseCS = allMaps[i].metadata.diff_size
-                animation.mapStatNumberCS.update(currentBaseCS)
-                // BPM
-                currentBaseBPM = allMaps[i].metadata.bpm
-                animation.mapStatNumberBPM.update(currentBaseBPM)
-                // Song Title and Artist
-                currentSongArtist = allMaps[i].metadata.artist
-                currentSongName = allMaps[i].metadata.title
-                currentSongArtistandName.text(currentSongArtist + " - " + currentSongName)
-                
-                if (currentSongArtistandName.width() >= 375) currentSongArtistandName.addClass("currentSongArtistandNameWrap")
-                else currentSongArtistandName.removeClass("currentSongArtistandNameWrap")
-                // Difficulty
-                currentSongDifficulty = allMaps[i].metadata.version
-                currentMapDifficulty.text(`[${currentSongDifficulty.toUpperCase()}]`)
-                // Set Creator
-                currentSongSetCreator = allMaps[i].metadata.creator
-                currentMapSetCreator.innerText = currentSongSetCreator.toUpperCase()
-                // Set / BG
-                currentSongSetID = allMaps[i].metadata.beatmapset_id
-                topBackground.css("backgroundImage",`url("https://assets.ppy.sh/beatmaps/${currentSongSetID}/covers/cover.jpg")`)
-                break
-            }
-        }
+    // Length
+    if(currentLength != data.menu.bm.time.full){
+        currentLength = data.menu.bm.time.full;
+        mapLength.text(calculateLength(currentLength));
     }
 
-    if (!poolMapFound) {
-        // SR
-        if (currentSR != data.menu.bm.stats.SR) {
-            currentSR = data.menu.bm.stats.SR
-            animation.SRStat.update(currentSR)
-        }
-        // AR
-        if (currentBaseAR != data.menu.bm.stats.AR) {
-            currentBaseAR = data.menu.bm.stats.AR
-            currentAR = calculateARandOD(currentBaseAR, currentMapMod)   
-            animation.mapStatNumberAR.update(currentAR)
-        }
-        // OD
-        if ( currentBaseOD != data.menu.bm.stats.OD) {
-            currentBaseOD = data.menu.bm.stats.OD
-            currentOD = calculateARandOD(currentBaseOD, currentMapMod)   
-            animation.mapStatNumberOD.update(currentOD)
-        }
-        // CS
-        if (currentBaseCS != data.menu.bm.stats.CS) {
-            currentBaseCS = data.menu.bm.stats.CS
-            if (currentMapMod.toLowerCase().includes("hr")) currentBaseCS *= 1.3
-            else currentCS = currentBaseCS
-            animation.mapStatNumberCS.update(currentCS)
-        }
-        // BPM
-        if (!poolMapFound && currentBaseBPM != data.menu.bm.stats.BPM.min) {
-            currentBaseBPM = data.menu.bm.stats.BPM.min
-            currentBPM = (currentMapMod.toLowerCase().includes("dt"))? currentBaseBPM *= 1.5 : currentBaseBPM
-            animation.mapStatNumberBPM.update(currentBPM)
-        }
-        // Song Title and Artist
-        if (currentSongArtist != data.menu.bm.metadata.artist || currentSongName != data.menu.bm.metadata.title) {
-            currentSongArtist = data.menu.bm.metadata.artist
-            currentSongName = data.menu.bm.metadata.title
-            currentSongArtistandName.text(currentSongArtist + " - " + currentSongName)
+    // SR
+    if (currentSR != data.menu.bm.stats.SR) {
+        currentSR = data.menu.bm.stats.SR
+        animation.SRStat.update(currentSR)
+    }
+    // AR
+    if (currentBaseAR != data.menu.bm.stats.AR) {
+        currentBaseAR = data.menu.bm.stats.AR
+        currentAR = calculateARandOD(currentBaseAR, currentMapMod)   
+        animation.mapStatNumberAR.update(currentAR)
+    }
+    // OD
+    if ( currentBaseOD != data.menu.bm.stats.OD) {
+        currentBaseOD = data.menu.bm.stats.OD
+        currentOD = calculateARandOD(currentBaseOD, currentMapMod)   
+        animation.mapStatNumberOD.update(currentOD)
+    }
+    // CS
+    if (currentBaseCS != data.menu.bm.stats.CS) {
+        currentBaseCS = data.menu.bm.stats.CS
+        if (currentMapMod.toLowerCase().includes("hr")) currentBaseCS *= 1.3
+        else currentCS = currentBaseCS
+        animation.mapStatNumberCS.update(currentCS)
+    }
+    // BPM
+    if (!poolMapFound && currentBaseBPM != data.menu.bm.stats.BPM.min) {
+        currentBaseBPM = data.menu.bm.stats.BPM.min
+        currentBPM = (currentMapMod.toLowerCase().includes("dt"))? currentBaseBPM *= 1.5 : currentBaseBPM
+        animation.mapStatNumberBPM.update(currentBPM)
+    }
+    // Song Title and Artist
+    if (currentSongArtist != data.menu.bm.metadata.artist || currentSongName != data.menu.bm.metadata.title) {
+        currentSongArtist = data.menu.bm.metadata.artist
+        currentSongName = data.menu.bm.metadata.title
+        currentSongArtistandName.text(currentSongArtist + " - " + currentSongName)
 
-            if (currentSongArtistandName.width() >= 375) currentSongArtistandName.addClass("currentSongArtistandNameWrap")
-            else currentSongArtistandName.removeClass("currentSongArtistandNameWrap")
-        }
-        // Diff Name
-        if (currentSongDifficulty != data.menu.bm.metadata.difficulty) {
-            currentSongDifficulty = data.menu.bm.metadata.difficulty
-            currentMapDifficulty.text(`[${currentSongDifficulty.toUpperCase()}]`)
-        }
-        // Set Creator Name
-        if (currentSongSetCreator != data.menu.bm.metadata.mapper) {
-            currentSongSetCreator = data.menu.bm.metadata.mapper
-            currentMapSetCreator.innerText = currentSongSetCreator.toUpperCase()
-        }
-        // Set / BG
-        if (currentSongSetID != data.menu.bm.set) {
-            currentSongSetID = data.menu.bm.set
-            topBackground.css("backgroundImage",`url("https://assets.ppy.sh/beatmaps/${currentSongSetID}/covers/cover.jpg")`)
-        }
+        if (currentSongArtistandName.width() >= 375) currentSongArtistandName.addClass("currentSongArtistandNameWrap")
+        else currentSongArtistandName.removeClass("currentSongArtistandNameWrap")
+    }
+    // Diff Name
+    if (currentSongDifficulty != data.menu.bm.metadata.difficulty) {
+        currentSongDifficulty = data.menu.bm.metadata.difficulty
+        currentMapDifficulty.text(`${currentSongDifficulty.toUpperCase()}`);
+        if (currentMapDifficulty.width() >= 171) currentMapDifficulty.addClass("currentSongDiffName")
+        else currentMapDifficulty.removeClass("currentSongDiffName")
+    }
+    // Set Creator Name
+    if (currentSongSetCreator != data.menu.bm.metadata.mapper) {
+        currentSongSetCreator = data.menu.bm.metadata.mapper
+        currentMapSetCreator.innerText = currentSongSetCreator.toUpperCase()
+    }
+    // Set / BG
+    if (currentSongSetID != data.menu.bm.set) {
+        currentSongSetID = data.menu.bm.set
+        topBackground.css("backgroundImage",`url("https://assets.ppy.sh/beatmaps/${currentSongSetID}/covers/cover.jpg")`)
     }
 
-
-
-    // Update all player details
+    //Update all player details
     if (userID0 != data.tourney.ipcClients[0].spectating.userID) {
         userID0 = data.tourney.ipcClients[0].spectating.userID
         arrayOfIDs[0] = userID0
@@ -416,6 +358,9 @@ socket.onmessage = event => {
             }
         }
     }
+
+    console.log(arrayOfIDs, currentPlayers);
+
     // Check previousAndCurrentIDsSame
     if (previousPlayerIDs.length == currentPlayerIDs.length) {
         for (var i = 0; i < previousPlayerIDs.length; i++) {
@@ -441,17 +386,21 @@ socket.onmessage = event => {
         let rightSidePlayers1 = document.getElementById("rightSidePlayers")
         for (i = 0; i < leftSidePlayers1.childElementCount; i++) {
             let name = leftSidePlayers1.children[i].children[0].children[0]
+            let wrapper = leftSidePlayers1.children[i].children[0];
             let score = leftSidePlayers1.children[i].children[0].children[1]
             name.innerText = currentPlayers[i].username.toUpperCase()
-            name.style.color = `var(--player${i + 1}Color)`
+            name.style.color = `black`;
+            wrapper.style.backgroundColor = `var(--player${i + 1}Color)`;
             score.innerText = currentPlayers[i].score
             currentPlayers[i].scoreElement = document.getElementById(`player${i}Container`)
         }
         for (let j = 0; j < rightSidePlayers1.childElementCount; j++) {
             let name = rightSidePlayers1.children[j].children[0].children[0]
+            let wrapper = rightSidePlayers1.children[j].children[0];
             let score = rightSidePlayers1.children[j].children[0].children[1]
             name.innerText = currentPlayers[i].username.toUpperCase()
-            name.style.color = `var(--player${i + 1}Color)`
+            name.style.color = `black`;
+            wrapper.style.backgroundColor = `var(--player${i + 1}Color)`;
             score.innerText = currentPlayers[i].score
             currentPlayers[i].scoreElement = document.getElementById(`player${i}Container`)
             i++
@@ -508,10 +457,10 @@ socket.onmessage = event => {
     if (currentScoreVisibility != data.tourney.manager.bools.scoreVisible) {
         currentScoreVisibility = data.tourney.manager.bools.scoreVisible
         if (currentScoreVisibility) {
-            chatDisplay.style.opacity = 0;
+            // chatDisplay.style.opacity = 0;
             scoreProgress.style.opacity = 1;
         } else {
-            chatDisplay.style.opacity = 1;
+            // chatDisplay.style.opacity = 1;
             scoreProgress.style.opacity = 0;
         }
     }
@@ -536,24 +485,26 @@ socket.onmessage = event => {
         animation.bottomScoreMax.update(maxScore)
         // Crowns
         let widthChange = (bottomScoreMax.getBoundingClientRect().width - 99) / 2
-        bottomCrownOverlay.css("left",`${widthChange + 1257.55}px`)
-        bottomCrown.css("left",`${widthChange + 1263}px`)
+        bottomCrownOverlay.css("left",`${widthChange + 1267.55}px`)
+        bottomCrown.css("left",`${widthChange + 1273}px`)
         
         for (let i = 0; i < sortedPlayers.length; i++) {
             // Place ranking next to name
             rankElement = sortedPlayers[i].scoreElement.lastChild.lastChild
+            scoreElement = sortedPlayers[i].scoreElement.lastChild.children[1]; 
+            nameElement = sortedPlayers[i].scoreElement.lastChild.children[0]; 
+
+            console.log(scoreElement);
             if (i == 0) {
                 rankElement.innerText = "1st"
-                rankElement.style.color = "var(--numberOnePlaceColour)"
-            } else if (i == 1) {
-                rankElement.innerText = "2nd"
-                rankElement.style.color = "var(--numberTwoPlaceColour)"
-            } else if (i == 2) {
-                rankElement.innerText = "3rd"
-                rankElement.style.color = "var(--numberThreePlaceColour)"
-            } else {
-                rankElement.innerText = `${i + 1}th`
                 rankElement.style.color = "white"
+                scoreElement.style.color = "white";
+                nameElement.style.color = "white";
+            } else {
+                rankElement.innerText = `${i + 1}th`;
+                rankElement.style.color = "black";
+                scoreElement.style.color = "black";
+                nameElement.style.color = "black";
             }
 
             // Move Avatar Element and change z-index
@@ -565,58 +516,6 @@ socket.onmessage = event => {
             barElement = sortedPlayers[i].barElement
             barElement.style.width = `${1171 * (sortedPlayers[i].score / maxScore)}px`
             barElement.style.zIndex = i
-        }
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Chat ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // This is also mostly taken from Victim Crasher: https://github.com/VictimCrasher/static/tree/master/WaveTournament
-    if (!currentScoreVisibility) {
-        // Only happens if there are no new chats messages, or the chat length is the same
-        if (chatLen !== data.tourney.manager.chat.length) {
-            if (chatLen == 0 || (chatLen > 0 && chatLen > data.tourney.manager.chat.length)) {
-                // Reset everything for a new chat.
-				chatDisplay.innerHTML = "";
-				chatLen = 0;
-            }
-            
-            for (var i = chatLen; i < data.tourney.manager.chat.length; i++) {
-                chatColour = data.tourney.manager.chat[i].team;
-
-                let messageWrapper = document.createElement("div");
-                messageWrapper.setAttribute('class', 'messageWrapper');
-
-				let messageTime = document.createElement('div');
-				messageTime.setAttribute('class', 'messageTime');
-                messageTime.innerText = data.tourney.manager.chat[i].time;
-
-                let wholeMessage = document.createElement("div");
-                wholeMessage.setAttribute('class', 'wholeMessage');
-
-				let messageUser = document.createElement('div');
-				messageUser.setAttribute('class', 'messageUser');
-                messageUser.innerText = data.tourney.manager.chat[i].name + ":\xa0";
-
-                let messageText = document.createElement('div');
-				messageText.setAttribute('class', 'messageText');
-                messageText.innerText = data.tourney.manager.chat[i].messageBody;
-
-                messageUser.style.color = "yellow"
-                for (let i = 0; i < currentPlayers.length; i++) {
-                    if (data.tourney.manager.chat[i].name == currentPlayers[i].username) {
-                        messageUser.style.color = `var(--player${i}Color)`
-                        break
-                    }
-                }
-                if (chatColour == "bot") messageUser.style.color = "#FF66AA"
-
-                messageWrapper.append(messageTime);
-                messageWrapper.append(wholeMessage);
-                wholeMessage.append(messageUser);
-                wholeMessage.append(messageText);
-                chatDisplay.append(messageWrapper);
-            }
-			chatLen = data.tourney.manager.chat.length;
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
     }
 
@@ -646,10 +545,86 @@ socket.onmessage = event => {
     }
 }
 
-function changeCommentatorNames() {
-    if (commentatorNameInput1.val().trim().toLowerCase() == "empty") commentatorName1.innerText = ""
-    else if (commentatorNameInput1.val().trim() != "") commentatorName1.innerText = commentatorNameInput1.val().trim().toUpperCase()
-
-    if (commentatorNameInput2.val().trim().toLowerCase() == "empty") commentatorName2.innerText = ""
-    else if (commentatorNameInput2.val().trim() != "") commentatorName2.innerText = commentatorNameInput2.val().trim().toUpperCase()
-}
+// let data = {
+//     tourney: {
+//         ipcClients: [
+//             {
+//                 spectating: {
+//                     userID: 7943969,
+//                     name: 'DeadRote'
+//                 },
+//                 gameplay: {
+//                     score: 30000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 7562902,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 45000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 9269034,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 25000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 11367222,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 60000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 10549880,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 90000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 5199332,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 250000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 6600930,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 100000
+//                 }
+//             },
+//             {
+//                 spectating: {
+//                     userID: 16817965,
+//                     name: 'mrekk'
+//                 },
+//                 gameplay: {
+//                     score: 46000
+//                 }
+//             },
+//         ],
+//         manager: {
+//             bools: {
+//                 scoreVisible: true
+//             }
+//         }
+//     }
+// }

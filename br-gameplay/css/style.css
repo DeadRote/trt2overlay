@@ -6,14 +6,14 @@
     --red: #ed144a;
     --darkGray: #121212;
 
-    --player1Color: #f11247;
-    --player2Color: #2cf112;
-    --player3Color: #f1d912;
-    --player4Color: #f1127b;
-    --player5Color: #125bf1;
-    --player6Color: #f16612;
-    --player7Color: #12eef1;
-    --player8Color: #9512f1;
+    --player1Color: #C93333;
+    --player2Color: #DF844E;
+    --player3Color: #D4BC76;
+    --player4Color: #B6E376;
+    --player5Color: #7FE7DE;
+    --player6Color: #7F8EE7;
+    --player7Color: #B57FE7;
+    --player8Color: #E77FBA;
 
     --numberOnePlaceColour: #f1d912;
     --numberTwoPlaceColour: #89f5ff;
@@ -38,65 +38,86 @@ video { position: absolute; left: 0; top: 0; }
 }
 
 /* Top Section */
-#topSection { width: 1920px; height: 152px; }
+#topSection { position: relative; width: 1920px; height: 152px; }
 
-/* Map Background */
-#topBackground {
+#mapbox {
     position: absolute;
-    left: 747px; width: 900px; height: inherit;
-    background-position: 50%;
-    background-size: cover;
-    background-image: url("https://assets.ppy.sh/beatmaps/1843748/covers/cover.jpg");
-    z-index: -1;
+    top: 0px;
+    right: 0px;
+    width: 884px;
+    height: 152px;
+    background-image: url('https://assets.ppy.sh/beatmaps/1843748/covers/cover.jpg');
+    clip-path: polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 38px 0%);
 }
-#topBackgroundOverlay {
-    position: absolute; top: 0; left: 0;
-    width: inherit; height: inherit;
-    background-color: rgba(0,0,0,0.7)
+
+#mapbox-border {
+    position: absolute;
+    top: 0px;
+    right: 846px;
+    height: 152px;
+    width: 42px;
+    background: white;
+    clip-path: polygon(38px 0%, 100% 0%, 4px 100%, 0% 100%, 38px 0%);
+}
+
+.boxFilter {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.71);
 }
 
 /* Map Stats */
 #mapStatsLeft { 
-    position: absolute; top: 21px; left: 1246px;;
-    width: 145px;
+    position: absolute; 
+    top: 26px; 
+    left: 78px;
+    width: auto;
 }
 #mapStatsRight {
-    position: absolute; top: 21px; right: 367px;
-    width: 160px;
-}
-.topLineStatBox {
-    width: 67px; height: 61px;
-    display: inline-block;
-    margin-right: 2px;
-}
-.mapStatsTexts {
-    width: inherit; 
+    position: absolute; 
+    top: 21px; 
+    right: 0px;
+    width: 223px;
     font-family: 'Lexend'; 
     font-weight: 600; 
-    text-align: center;
 }
+.topLineStatBox {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 35px;
+    /* display: inline-block; */
+    margin-bottom: 2px;
+    display: flex;
+}
+
 .mapStatsTitle {
-    height: 22px;
-    line-height: 22px;
-    font-size: 18px;
-    background-color: white;
+    display: inline-block;
+    line-height: 21px;
+    font-size: 24px;
+    color: white;
+    flex: 1;
 }
 .mapStatsNumber {
-    height: 39px;
-    line-height: 39px;
-    font-size: 28px;
-    background-color: var(--lightYellow)
+    font-size: 21px;
+    margin-left: auto;
 }
-#BPMStat { 
-    width: 85px; 
-    background-color: var(--lightGray);
+#BPMStat .mapStatsNumber { 
+    color: #FFE292
 }
-#SRStat {
-    position: absolute; top: 73px;
-    background-color: white;
-    font-family: 'Lexend'; font-size: 20px; font-weight: 600; 
-    padding: 3px 15.5px;
+#SRStat .mapStatsNumber {
+    
 }
+#ODStat .mapStatsNumber {
+    color: #7FE7DE;
+}
+#CSStat .mapStatsNumber {
+    color: #B6E376;
+}
+#ARStat .mapStatsNumber {
+    color: #E980BB;
+}
+
 #mapModSlot {
     position: absolute; top: 73px; right: 0;
     width: 80px; height: 32px;
@@ -107,26 +128,95 @@ video { position: absolute; left: 0; top: 0; }
     text-align: center;
 }
 
+#mapLength {
+    color: #FFE292;
+    font-size: 16px;
+    font-family: 'Lexend';
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    width: 100%;
+}
+
 /* Current Map */
+
+.diffWrapper {
+    font-family: 'Lexend';
+    text-align: center;
+    color: white;
+    width: 172px;
+    margin-bottom: 10px;
+    
+}
+
+.wrapperName {
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    font-weight: 300;
+}
+
+#currentMapDifficultyWrapper {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 172px;
+    text-align: center;
+}
+
+#currentMapDifficulty {
+    color: #7FE7DE;
+    font-size: 16px;
+    display: inline-block;
+    font-family: 'Lexend';
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    /* width: 100%; */
+    
+}
+
+.boxTitle {
+    font-size: 16px;
+    font-family: 'Lexend';
+    color: white;
+    font-weight: 800;
+    letter-spacing: 2px;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+
 #currentMap {
-    position: absolute; left: 756px; top: 21px; width: 403px;
-    font-family: 'Lexend'; font-weight: 600; 
+    position: absolute; 
+    left: 249px; 
+    top: 34px; 
+    width: 400px;
+    font-family: 'Lexend'; 
+    font-weight: 600; 
+    text-align: center;
 }
 #currentSongArtistandNameWrapper {
-    position: absolute; top: 36px; left: 50%; transform: translateX(-50%);
+    position: relative;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     width: 375px; height: 31px;
     font-size: 23px;
-    letter-spacing: 3px;
+    line-height: 23px;
+    letter-spacing: 1px;
     text-align: center;
+    margin-top: 9px
 }
 #currentSongArtistandName {
     color: white;
     display: inline-block;
 	width: max-content;
 }
+
+.currentSongDiffName {
+    transform: translateX(-171px);
+    animation: currentSongDiffName 10s linear infinite;
+}
+
 .currentSongArtistandNameWrap {
     transform: translateX(-375px);
     animation: currentSongArtistandNameWrap 15s linear infinite;
@@ -137,19 +227,25 @@ video { position: absolute; left: 0; top: 0; }
     80% { transform: translateX(calc(-100% + 375px)); }
     100% { transform: translateX(calc(-100% + 375px)); }
 }
-#currentMapDifficulty {
-    position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
-    color: var(--lighterYellow);
-    font-size: 17px;
-    letter-spacing: 1.2px;
-    width: max-content;
+
+@keyframes currentSongDiffName {
+    0% {transform: translateX(0px);}
+    11% {transform: translateX(0px);}
+    90% { transform: translateX(calc(-100% )); }
+    100% { transform: translateX(calc(-100% )); }
 }
+
 #currentMapSetCreator {
-    position: absolute; top: 91px; left: 50%; transform: translateX(-50%);
-    color: var(--blue);
-    font-size: 18px;
-    letter-spacing: 2px;
-    width: max-content;
+    position: relative;
+    /* color: var(--blue); */
+    font-size: 17px;
+    letter-spacing: 1px;
+    font-weight: 800;
+    color: #F1D58A;
+    width: 100%;
+    text-align: center;
+    line-height: 17px;
+    
 }
 
 /* Commentators */
@@ -165,7 +261,7 @@ video { position: absolute; left: 0; top: 0; }
 /* Player Containers and Scores */
 .sidePlayersContainer {
     position: absolute; bottom: 0;
-    width: 260px; height: 206px;
+    width: 260px; height: 204px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -173,30 +269,48 @@ video { position: absolute; left: 0; top: 0; }
 #leftSidePlayers { left: 0; }
 #rightSidePlayers { right: 0; }
 .playerContainer {
-    margin-left: 15px; 
+    margin-left: 0px; 
     flex-grow: 1;
 }
-.playerContainerRight {  margin-right: 15px; }
+.playerContainerRight {  margin-right: 0px; }
 .playerWrapper { 
     position: relative; top: 50%; transform: translateY(-50%);
-    height: 45px;
+    height: 42px;
+    background-image: url(../static/player_logo.png);
+    background-repeat: no-repeat;
+    background-size: 46%;
+    background-position: -15px -30px;
+    box-sizing: border-box;
+    padding: 5px 19px;
+    text-align: right;
 }
 .playerName { 
-    font-family: 'Lexend'; font-weight: 800; font-size: 17px;
-    width: 160px; height: 20px;
+    font-family: 'Lexend'; 
+    font-weight: 800; 
+    font-size: 15px;
+    width: 100%; 
+    height: 16px;
 }
-.playerScore { 
-    font-family: 'Lexend'; font-weight: 400; font-size: 17px;
-    color: white;
+.playerScore {
+    font-family: 'Lexend'; font-weight: 300; font-size: 14px;
+    color: black;
     letter-spacing: 1px;
-    width: 160px;
+    width: 100%; 
 }
 .playerRank {
-    font-family: 'IBM Plex Mono', monospace; font-size: 24px;
+    font-family: 'Lexend';
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
     color: white;
+    position: absolute;
+    top: 0;
+    left: 15px;
+    text-transform: uppercase;
+    font-weight: 800;
 }
-.playerRankLeft { position: absolute; left: 168px; transform: translateY(-120%);  }
-.playerRankRight { position: relative; top: 50%; left: 10px; transform: translateY(-50%); }
+
 .playerDetailsRight { text-align: right; }
 .floatRight { float: right; }
 
