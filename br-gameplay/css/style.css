@@ -38,14 +38,19 @@ video { position: absolute; left: 0; top: 0; }
 }
 
 /* Top Section */
-#topSection { position: relative; width: 1920px; height: 152px; }
+#topSection { 
+    position: relative; 
+    width: 1920px; 
+    height: 149px;
+    border-bottom: 5px solid white;
+}
 
 #mapbox {
     position: absolute;
     top: 0px;
     right: 0px;
     width: 884px;
-    height: 150px;
+    height: 149px;
     background-image: url('https://assets.ppy.sh/beatmaps/1843748/covers/cover.jpg');
     clip-path: polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 38px 0%);
 }
@@ -54,7 +59,7 @@ video { position: absolute; left: 0; top: 0; }
     position: absolute;
     top: 0px;
     right: 846px;
-    height: 150px;
+    height: 149px;
     width: 42px;
     background: white;
     clip-path: polygon(38px 0%, 100% 0%, 4px 100%, 0% 100%, 38px 0%);
