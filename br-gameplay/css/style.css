@@ -53,6 +53,7 @@ video { position: absolute; left: 0; top: 0; }
     height: 149px;
     background-image: url('https://assets.ppy.sh/beatmaps/1843748/covers/cover.jpg');
     clip-path: polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 38px 0%);
+    background-position-y: -50px;
 }
 
 #mapbox-border {
@@ -281,7 +282,7 @@ video { position: absolute; left: 0; top: 0; }
 .playerWrapper { 
     position: relative; top: 50%; transform: translateY(-50%);
     height: 42px;
-    background-image: url(../static/player_logo.png);
+    /* background-image: url(../static/player_logo.png); */
     background-repeat: no-repeat;
     background-size: 46%;
     background-position: -15px -30px;
@@ -314,6 +315,19 @@ video { position: absolute; left: 0; top: 0; }
     left: 15px;
     text-transform: uppercase;
     font-weight: 800;
+}
+
+.playerPfp {
+    position: absolute;
+    height: 100%;
+    width: 100px;
+    top: 0;
+    left: 0;
+    background-size: 100%;
+    background-position-y: 50%;
+    z-index: -1;
+    mask-image: linear-gradient(to left, transparent 15%, black 88%);
+    filter: opacity(0.6);
 }
 
 .playerDetailsRight { text-align: right; }

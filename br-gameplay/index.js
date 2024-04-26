@@ -265,289 +265,320 @@ socket.onmessage = event => {
             player7.username = data.tourney.ipcClients[7].spectating.name
         }
     }
+     // Count number of players from the list
+     previousNumberOfPlayers = currentNumberOfPlayers
+     currentNumberOfPlayers = 0
+     for (let i = 0; i < arrayOfIDs.length; i++) if (arrayOfIDs[i] != 0) {
+         currentNumberOfPlayers++
+     }
+     if (previousNumberOfPlayers != currentNumberOfPlayers) {
+         leftSidePlayers.html("")
+         rightSidePlayers.html("")
+         
+         let i;
+         for (i = 0; i < currentNumberOfPlayers / 2; i++) {
+             // Append players to left hand side
+             let playerContainerDiv = document.createElement("div")
+             let playerWrapperDiv = document.createElement("div")
+             let playerNameDiv = document.createElement("div")
+             let playerScoreDiv = document.createElement("div")
+             let playerRankDiv = document.createElement("div")
+             let playerPfp = document.createElement("div");
+ 
+             playerContainerDiv.classList.add("playerContainer")
+             playerWrapperDiv.classList.add("playerWrapper")
+             playerNameDiv.classList.add("playerName")
+             playerScoreDiv.classList.add("playerScore")
+             playerRankDiv.classList.add("playerRank")
+             playerRankDiv.classList.add("playerRankLeft")
+             playerPfp.classList.add('playerPfp');
+ 
+             playerContainerDiv.setAttribute("id",`player${i}Container`)
+             playerNameDiv.setAttribute("id",`player${i}Name`)
+             playerScoreDiv.setAttribute("id",`player${i}Score`)
+             playerScoreDiv.innerText = "0"
+             playerRankDiv.setAttribute("id",`player${i}Rank`)
+ 
+             playerWrapperDiv.append(playerNameDiv)
+             playerWrapperDiv.append(playerScoreDiv)
+             playerWrapperDiv.append(playerRankDiv)
+             playerWrapperDiv.append(playerPfp);
+             playerContainerDiv.append(playerWrapperDiv)
+             leftSidePlayers.append(playerContainerDiv)
+ 
+             playerScoreAnimation[`player${i}Score`] =  new CountUp(`player${i}Score`, 0, 0, 0, .2, {useEasing: true, useGrouping: true, separator: ",", decimal: "." })
+         }
+         for (i; i < currentNumberOfPlayers; i++) {
+             // Append players to right hand side
+             let playerContainerDiv = document.createElement("div")
+             let playerWrapperDiv = document.createElement("div")
+             let playerNameDiv = document.createElement("div")
+             let playerScoreDiv = document.createElement("div")
+             let playerRankDiv = document.createElement("div")
+             let playerPfp = document.createElement("div");
+ 
+             playerContainerDiv.classList.add("playerContainer")
+             playerContainerDiv.classList.add("playerContainerRight")
+             playerWrapperDiv.classList.add("playerWrapper")
+             playerNameDiv.classList.add("playerName")
+             playerNameDiv.classList.add("playerDetailsRight")
+             playerNameDiv.classList.add("floatRight")
+             playerScoreDiv.classList.add("playerScore")
+             playerScoreDiv.classList.add("playerDetailsRight")
+             playerScoreDiv.classList.add("floatRight")
+             playerRankDiv.classList.add("playerRank")
+             playerRankDiv.classList.add("playerRankRight")
+             playerPfp.classList.add('playerPfp');
+ 
+             playerContainerDiv.setAttribute("id",`player${i}Container`)
+             playerNameDiv.setAttribute("id",`player${i}Name`)
+             playerScoreDiv.setAttribute("id",`player${i}Score`)
+             playerScoreDiv.innerText = "0"
+             playerRankDiv.setAttribute("id",`player${i}Rank`)
+ 
+             playerWrapperDiv.append(playerNameDiv)
+             playerWrapperDiv.append(playerScoreDiv)
+             playerWrapperDiv.append(playerRankDiv)
+             playerWrapperDiv.append(playerPfp);
+             playerContainerDiv.append(playerWrapperDiv)
+             rightSidePlayers.append(playerContainerDiv)
+ 
+             playerScoreAnimation[`player${i}Score`] =  new CountUp(`player${i}Score`, 0, 0, 0, .2, {useEasing: true, useGrouping: true, separator: ",", decimal: "." })
+         }
+     }
+ 
+     // Put players into correct positions
+     // Get list of players
+     previousPlayerIDs = [...currentPlayerIDs]
+     currentPlayerIDs = []
+     let previousAndCurrentIDsSame = true
+     previousPlayers = [...currentPlayers]
+     currentPlayers = []
+     for (let i = 0; i < arrayOfIDs.length; i++) if (arrayOfIDs[i] != 0) currentPlayerIDs.push(arrayOfIDs[i])
+     for (let i = 0; i < currentPlayerIDs.length; i++) {
+         for (let j = 0; j < arrayOfPlayers.length; j++) {
+             if (currentPlayerIDs[i] == arrayOfPlayers[j].userID) {
+                 currentPlayers.push(arrayOfPlayers[j])
+                 break
+             }
+         }
+     }
+ 
+     console.log(arrayOfIDs, currentPlayers);
+ 
+     // Check previousAndCurrentIDsSame
+     if (previousPlayerIDs.length == currentPlayerIDs.length) {
+         for (var i = 0; i < previousPlayerIDs.length; i++) {
+             if (previousPlayerIDs[i] != currentPlayerIDs[i]) previousAndCurrentIDsSame = false
+             if (!previousAndCurrentIDsSame) break
+         }
+     } else previousAndCurrentIDsSame = false
+ 
+     // Both conditions have to be met if we are to skip the addition of this step
+     if (!previousAndCurrentIDsSame || previousNumberOfPlayers != currentNumberOfPlayers || loadFirstTime) {
+         loadFirstTime = false
+         // Clear DOM element, score, and rank for all players
+         for (let i = 0; i < arrayOfPlayers.length; i++) {
+             arrayOfPlayers[i].avatarElement = ""
+             arrayOfPlayers[i].scoreElement = ""
+             arrayOfPlayers[i].score = 0
+             arrayOfPlayers[i].rank = "0th"
+         }
+ 
+         // Adding names and score
+         let i
+         let leftSidePlayers1 = document.getElementById("leftSidePlayers")
+         let rightSidePlayers1 = document.getElementById("rightSidePlayers")
+         for (i = 0; i < leftSidePlayers1.childElementCount; i++) {
+             let name = leftSidePlayers1.children[i].children[0].children[0]
+             let wrapper = leftSidePlayers1.children[i].children[0];
+             let score = leftSidePlayers1.children[i].children[0].children[1]
+             let pfp = leftSidePlayers1.children[i].children[0].children[3]
+             console.log(pfp);
+             name.innerText = currentPlayers[i].username.toUpperCase()
+             name.style.color = `black`;
+             wrapper.style.backgroundColor = `var(--player${i + 1}Color)`;
+             score.innerText = currentPlayers[i].score
+             pfp.style.backgroundImage = `url(https://a.ppy.sh/${currentPlayers[i].userID}) `;
+             currentPlayers[i].scoreElement = document.getElementById(`player${i}Container`)
+         }
+         for (let j = 0; j < rightSidePlayers1.childElementCount; j++) {
+             let name = rightSidePlayers1.children[j].children[0].children[0]
+             let wrapper = rightSidePlayers1.children[j].children[0];
+             let score = rightSidePlayers1.children[j].children[0].children[1]
+             let pfp = rightSidePlayers1.children[j].children[0].children[3]
+             name.innerText = currentPlayers[i].username.toUpperCase()
+             name.style.color = `black`;
+             wrapper.style.backgroundColor = `var(--player${i + 1}Color)`;
+             score.innerText = currentPlayers[i].score
+             pfp.style.backgroundImage = `url(https://a.ppy.sh/${currentPlayers[i].userID})`;
+             currentPlayers[i].scoreElement = document.getElementById(`player${i}Container`)
+             i++
+         }
+ 
+         // Adding player markers and player bars
+         upperAvatars.html("")
+         lowerBars.html("")
+         i = 0
+         for (i; i < currentPlayers.length; i++) {
+             
+             let avatarDiv = document.createElement("div")
+             let triangleDiv = document.createElement("div")
+             let profilePictureDiv = document.createElement("div")
+             let profilePictureBottomRightBorderDiv = document.createElement("div")
+ 
+             avatarDiv.classList.add("avatar")
+             triangleDiv.classList.add("triangle")
+             profilePictureDiv.classList.add("profilePicture")
+             profilePictureBottomRightBorderDiv.classList.add("profilePictureBottomRightBorder")
+ 
+             profilePictureDiv.style.borderColor = `var(--player${i + 1}Color)`
+             profilePictureDiv.style.backgroundImage = `url("https://a.ppy.sh/${currentPlayers[i].userID}")`
+             profilePictureBottomRightBorderDiv.style.borderColor = `transparent transparent transparent var(--player${i + 1}Color)`
+             triangleDiv.style.backgroundColor = `var(--player${i + 1}Color)`
+ 
+             avatarDiv.append(triangleDiv)
+             avatarDiv.append(profilePictureDiv)
+             avatarDiv.append(profilePictureBottomRightBorderDiv)
+             
+             currentPlayers[i].avatarElement = avatarDiv
+             console.log(avatarDiv)
+             upperAvatars.append(avatarDiv)
+         }
+ 
+         // Adding gray bar back
+         let grayBarDiv = document.createElement("div")
+         grayBarDiv.classList.add("grayBar")
+         grayBarDiv.classList.add("playerBar")
+         lowerBars.append(grayBarDiv)
+ 
+         // Add player bars
+         for (let i = 0; i < currentPlayers.length; i++) {
+             let barDiv = document.createElement("div")
+             barDiv.classList.add("playerBar")
+             barDiv.style.backgroundColor = `var(--player${i + 1}Color)`
+             barDiv.style.width = "0px"
+             currentPlayers[i].barElement = barDiv
+             lowerBars.append(barDiv)
+         }
+     }
+ 
+     // Score Visibility
+     if (currentScoreVisibility != data.tourney.manager.bools.scoreVisible) {
+         currentScoreVisibility = data.tourney.manager.bools.scoreVisible
+         if (currentScoreVisibility) {
+             // chatDisplay.style.opacity = 0;
+             scoreProgress.style.opacity = 1;
+         } else {
+             // chatDisplay.style.opacity = 1;
+             scoreProgress.style.opacity = 0;
+         }
+     }
+     if (currentScoreVisibility) {
+         // Set and update all scores for all players
+         for (let i = 0; i < currentPlayers.length; i++) {
+             for (let j = 0; j < data.tourney.ipcClients.length; j++) {
+                 if (currentPlayers[i].userID == data.tourney.ipcClients[j].spectating.userID) {
+                     currentPlayers[i].score = data.tourney.ipcClients[j].gameplay.score
+                     playerScoreAnimation[`player${i}Score`].update(currentPlayers[i].score)
+                     break
+                 }
+             }
+         }
+ 
+         // Sort players
+         sortedPlayers = currentPlayers.sort((a, b) => b.score - a.score)
+ 
+         // Calculate max score and change elements
+         let maxScore = 50000;
+         if (sortedPlayers.length > 0) maxScore = Math.max(50000, sortedPlayers[0].score)
+         animation.bottomScoreMax.update(maxScore)
+         // Crowns
+         let widthChange = (bottomScoreMax.getBoundingClientRect().width - 99) / 2
+         bottomCrownOverlay.css("left",`${widthChange + 1267.55}px`)
+         bottomCrown.css("left",`${widthChange + 1273}px`)
+         
+         for (let i = 0; i < sortedPlayers.length; i++) {
+             // Place ranking next to name
+             rankElement = sortedPlayers[i].scoreElement.lastChild.children[2];
+             scoreElement = sortedPlayers[i].scoreElement.lastChild.children[1]; 
+             nameElement = sortedPlayers[i].scoreElement.lastChild.children[0]; 
+ 
+             console.log(scoreElement);
+             if (i == 0) {
+                 rankElement.innerText = "1st"
+                 rankElement.style.color = "white"
+                 scoreElement.style.color = "white";
+                 nameElement.style.color = "white";
+                 let firstPlaceCrown = document.createElement("img");
+                 firstPlaceCrown.src = "static/crown.png" 
+                 firstPlaceCrown.style.width = "31px";
+                 firstPlaceCrown.style.height = "19px";
+                 firstPlaceCrown.style.position = "absolute";
+                 firstPlaceCrown.style.marginTop = "15px";
+                 firstPlaceCrown.style.filter = "drop-shadow(0px 0px 8px #f1d912)";
+                 if(sortedPlayers[i].scoreElement.classList.contains('playerContainerRight')) {
+                    firstPlaceCrown.style.left = "-38px";
+                    sortedPlayers[i].scoreElement.prepend(firstPlaceCrown);
+                 } else {
+                    firstPlaceCrown.style.right = "-38px";
+                    sortedPlayers[i].scoreElement.prepend(firstPlaceCrown);
+                 }
 
-    // Count number of players from the list
-    previousNumberOfPlayers = currentNumberOfPlayers
-    currentNumberOfPlayers = 0
-    for (let i = 0; i < arrayOfIDs.length; i++) if (arrayOfIDs[i] != 0) {
-        currentNumberOfPlayers++
-    }
-    if (previousNumberOfPlayers != currentNumberOfPlayers) {
-        leftSidePlayers.html("")
-        rightSidePlayers.html("")
-        
-        let i;
-        for (i = 0; i < currentNumberOfPlayers / 2; i++) {
-            // Append players to left hand side
-            let playerContainerDiv = document.createElement("div")
-            let playerWrapperDiv = document.createElement("div")
-            let playerNameDiv = document.createElement("div")
-            let playerScoreDiv = document.createElement("div")
-            let playerRankDiv = document.createElement("div")
+             } else if(i == 1) {
+                 rankElement.innerText = `${i + 1}nd`;
+                 rankElement.style.color = "black";
+                 scoreElement.style.color = "black";
+                 nameElement.style.color = "black";
+             } else if(i == 2) {
+                 rankElement.innerText = `${i + 1}rd`;
+                 rankElement.style.color = "black";
+                 scoreElement.style.color = "black";
+                 nameElement.style.color = "black";
+             }  else {
+                 rankElement.innerText = `${i + 1}th`;
+                 rankElement.style.color = "black";
+                 scoreElement.style.color = "black";
+                 nameElement.style.color = "black";
+             }
+ 
+             // Move Avatar Element and change z-index
+             avatarElement = sortedPlayers[i].avatarElement
+             avatarElement.style.left = `${33 + 1171 * (sortedPlayers[i].score / maxScore)}px`
+             avatarElement.style.zIndex = `${8 - i}`
+ 
+             // Score Bar Width 
+             barElement = sortedPlayers[i].barElement
+             barElement.style.width = `${1171 * (sortedPlayers[i].score / maxScore)}px`
+             barElement.style.zIndex = i
+         }
+     }
+ 
+     // IPC State
+     if (ipcState != data.tourney.manager.ipcState) ipcState = data.tourney.manager.ipcState
+     if (ipcState == 1) {
+         if (!resetScores) {
+             // Reset Scores
+             for (let i = 0; i < currentPlayers.length; i++) {
+                 for (let j = 0; j < data.tourney.ipcClients.length; j++) {
+                     if (currentPlayers[i].userID == data.tourney.ipcClients[j].spectating.userID) {
+                         currentPlayers[i].score = 0
+                         playerScoreAnimation[`player${i}Score`].update(currentPlayers[i].score)
+ 
+                         rankElement = currentPlayers[i].rankElement
+                         rankElement.innerText = ""
+                         break
+                     }
+                 }
+             }
+             resetScores = true
+         }
+     } else if (ipcState == 3) {
+ 
+     } else if (ipcState == 4) {
+         resetScores = false
+     }
 
-            playerContainerDiv.classList.add("playerContainer")
-            playerWrapperDiv.classList.add("playerWrapper")
-            playerNameDiv.classList.add("playerName")
-            playerScoreDiv.classList.add("playerScore")
-            playerRankDiv.classList.add("playerRank")
-            playerRankDiv.classList.add("playerRankLeft")
-
-            playerContainerDiv.setAttribute("id",`player${i}Container`)
-            playerNameDiv.setAttribute("id",`player${i}Name`)
-            playerScoreDiv.setAttribute("id",`player${i}Score`)
-            playerScoreDiv.innerText = "0"
-            playerRankDiv.setAttribute("id",`player${i}Rank`)
-
-            playerWrapperDiv.append(playerNameDiv)
-            playerWrapperDiv.append(playerScoreDiv)
-            playerWrapperDiv.append(playerRankDiv)
-            playerContainerDiv.append(playerWrapperDiv)
-            leftSidePlayers.append(playerContainerDiv)
-
-            playerScoreAnimation[`player${i}Score`] =  new CountUp(`player${i}Score`, 0, 0, 0, .2, {useEasing: true, useGrouping: true, separator: ",", decimal: "." })
-        }
-        for (i; i < currentNumberOfPlayers; i++) {
-            // Append players to right hand side
-            let playerContainerDiv = document.createElement("div")
-            let playerWrapperDiv = document.createElement("div")
-            let playerNameDiv = document.createElement("div")
-            let playerScoreDiv = document.createElement("div")
-            let playerRankDiv = document.createElement("div")
-
-            playerContainerDiv.classList.add("playerContainer")
-            playerContainerDiv.classList.add("playerContainerRight")
-            playerWrapperDiv.classList.add("playerWrapper")
-            playerNameDiv.classList.add("playerName")
-            playerNameDiv.classList.add("playerDetailsRight")
-            playerNameDiv.classList.add("floatRight")
-            playerScoreDiv.classList.add("playerScore")
-            playerScoreDiv.classList.add("playerDetailsRight")
-            playerScoreDiv.classList.add("floatRight")
-            playerRankDiv.classList.add("playerRank")
-            playerRankDiv.classList.add("playerRankRight")
-
-            playerContainerDiv.setAttribute("id",`player${i}Container`)
-            playerNameDiv.setAttribute("id",`player${i}Name`)
-            playerScoreDiv.setAttribute("id",`player${i}Score`)
-            playerScoreDiv.innerText = "0"
-            playerRankDiv.setAttribute("id",`player${i}Rank`)
-
-            playerWrapperDiv.append(playerNameDiv)
-            playerWrapperDiv.append(playerScoreDiv)
-            playerWrapperDiv.append(playerRankDiv)
-            playerContainerDiv.append(playerWrapperDiv)
-            rightSidePlayers.append(playerContainerDiv)
-
-            playerScoreAnimation[`player${i}Score`] =  new CountUp(`player${i}Score`, 0, 0, 0, .2, {useEasing: true, useGrouping: true, separator: ",", decimal: "." })
-        }
-    }
-
-    // Put players into correct positions
-    // Get list of players
-    previousPlayerIDs = [...currentPlayerIDs]
-    currentPlayerIDs = []
-    let previousAndCurrentIDsSame = true
-    previousPlayers = [...currentPlayers]
-    currentPlayers = []
-    for (let i = 0; i < arrayOfIDs.length; i++) if (arrayOfIDs[i] != 0) currentPlayerIDs.push(arrayOfIDs[i])
-    for (let i = 0; i < currentPlayerIDs.length; i++) {
-        for (let j = 0; j < arrayOfPlayers.length; j++) {
-            if (currentPlayerIDs[i] == arrayOfPlayers[j].userID) {
-                currentPlayers.push(arrayOfPlayers[j])
-                break
-            }
-        }
-    }
-
-    console.log(arrayOfIDs, currentPlayers);
-
-    // Check previousAndCurrentIDsSame
-    if (previousPlayerIDs.length == currentPlayerIDs.length) {
-        for (var i = 0; i < previousPlayerIDs.length; i++) {
-            if (previousPlayerIDs[i] != currentPlayerIDs[i]) previousAndCurrentIDsSame = false
-            if (!previousAndCurrentIDsSame) break
-        }
-    } else previousAndCurrentIDsSame = false
-
-    // Both conditions have to be met if we are to skip the addition of this step
-    if (!previousAndCurrentIDsSame || previousNumberOfPlayers != currentNumberOfPlayers || loadFirstTime) {
-        loadFirstTime = false
-        // Clear DOM element, score, and rank for all players
-        for (let i = 0; i < arrayOfPlayers.length; i++) {
-            arrayOfPlayers[i].avatarElement = ""
-            arrayOfPlayers[i].scoreElement = ""
-            arrayOfPlayers[i].score = 0
-            arrayOfPlayers[i].rank = "0th"
-        }
-
-        // Adding names and score
-        let i
-        let leftSidePlayers1 = document.getElementById("leftSidePlayers")
-        let rightSidePlayers1 = document.getElementById("rightSidePlayers")
-        for (i = 0; i < leftSidePlayers1.childElementCount; i++) {
-            let name = leftSidePlayers1.children[i].children[0].children[0]
-            let wrapper = leftSidePlayers1.children[i].children[0];
-            let score = leftSidePlayers1.children[i].children[0].children[1]
-            name.innerText = currentPlayers[i].username.toUpperCase()
-            name.style.color = `black`;
-            wrapper.style.backgroundColor = `var(--player${i + 1}Color)`;
-            score.innerText = currentPlayers[i].score
-            currentPlayers[i].scoreElement = document.getElementById(`player${i}Container`)
-        }
-        for (let j = 0; j < rightSidePlayers1.childElementCount; j++) {
-            let name = rightSidePlayers1.children[j].children[0].children[0]
-            let wrapper = rightSidePlayers1.children[j].children[0];
-            let score = rightSidePlayers1.children[j].children[0].children[1]
-            name.innerText = currentPlayers[i].username.toUpperCase()
-            name.style.color = `black`;
-            wrapper.style.backgroundColor = `var(--player${i + 1}Color)`;
-            score.innerText = currentPlayers[i].score
-            currentPlayers[i].scoreElement = document.getElementById(`player${i}Container`)
-            i++
-        }
-
-        // Adding player markers and player bars
-        upperAvatars.html("")
-        lowerBars.html("")
-        i = 0
-        for (i; i < currentPlayers.length; i++) {
-            
-            let avatarDiv = document.createElement("div")
-            let triangleDiv = document.createElement("div")
-            let profilePictureDiv = document.createElement("div")
-            let profilePictureBottomRightBorderDiv = document.createElement("div")
-
-            avatarDiv.classList.add("avatar")
-            triangleDiv.classList.add("triangle")
-            profilePictureDiv.classList.add("profilePicture")
-            profilePictureBottomRightBorderDiv.classList.add("profilePictureBottomRightBorder")
-
-            profilePictureDiv.style.borderColor = `var(--player${i + 1}Color)`
-            profilePictureDiv.style.backgroundImage = `url("https://a.ppy.sh/${currentPlayers[i].userID}")`
-            profilePictureBottomRightBorderDiv.style.borderColor = `transparent transparent transparent var(--player${i + 1}Color)`
-            triangleDiv.style.backgroundColor = `var(--player${i + 1}Color)`
-
-            avatarDiv.append(triangleDiv)
-            avatarDiv.append(profilePictureDiv)
-            avatarDiv.append(profilePictureBottomRightBorderDiv)
-            
-            currentPlayers[i].avatarElement = avatarDiv
-            console.log(avatarDiv)
-            upperAvatars.append(avatarDiv)
-        }
-
-        // Adding gray bar back
-        let grayBarDiv = document.createElement("div")
-        grayBarDiv.classList.add("grayBar")
-        grayBarDiv.classList.add("playerBar")
-        lowerBars.append(grayBarDiv)
-
-        // Add player bars
-        for (let i = 0; i < currentPlayers.length; i++) {
-            let barDiv = document.createElement("div")
-            barDiv.classList.add("playerBar")
-            barDiv.style.backgroundColor = `var(--player${i + 1}Color)`
-            barDiv.style.width = "0px"
-            currentPlayers[i].barElement = barDiv
-            lowerBars.append(barDiv)
-            profilePictureDiv.style.backgroundImage = `url("https://a.ppy.sh/${currentPlayers[i].userID}")`
-        }
-    }
-
-    // Score Visibility
-    if (currentScoreVisibility != data.tourney.manager.bools.scoreVisible) {
-        currentScoreVisibility = data.tourney.manager.bools.scoreVisible
-        if (currentScoreVisibility) {
-            // chatDisplay.style.opacity = 0;
-            scoreProgress.style.opacity = 1;
-        } else {
-            // chatDisplay.style.opacity = 1;
-            scoreProgress.style.opacity = 0;
-        }
-    }
-    if (currentScoreVisibility) {
-        // Set and update all scores for all players
-        for (let i = 0; i < currentPlayers.length; i++) {
-            for (let j = 0; j < data.tourney.ipcClients.length; j++) {
-                if (currentPlayers[i].userID == data.tourney.ipcClients[j].spectating.userID) {
-                    currentPlayers[i].score = data.tourney.ipcClients[j].gameplay.score
-                    playerScoreAnimation[`player${i}Score`].update(currentPlayers[i].score)
-                    break
-                }
-            }
-        }
-
-        // Sort players
-        sortedPlayers = currentPlayers.sort((a, b) => b.score - a.score)
-
-        // Calculate max score and change elements
-        let maxScore = 50000;
-        if (sortedPlayers.length > 0) maxScore = Math.max(50000, sortedPlayers[0].score)
-        animation.bottomScoreMax.update(maxScore)
-        // Crowns
-        let widthChange = (bottomScoreMax.getBoundingClientRect().width - 99) / 2
-        bottomCrownOverlay.css("left",`${widthChange + 1267.55}px`)
-        bottomCrown.css("left",`${widthChange + 1273}px`)
-        
-        for (let i = 0; i < sortedPlayers.length; i++) {
-            // Place ranking next to name
-            rankElement = sortedPlayers[i].scoreElement.lastChild.lastChild
-            scoreElement = sortedPlayers[i].scoreElement.lastChild.children[1]; 
-            nameElement = sortedPlayers[i].scoreElement.lastChild.children[0]; 
-
-            console.log(scoreElement);
-            if (i == 0) {
-                rankElement.innerText = "1st"
-                rankElement.style.color = "white"
-                scoreElement.style.color = "white";
-                nameElement.style.color = "white";
-            } else if(i == 1) {
-                rankElement.innerText = `${i + 1}nd`;
-            } else if(i == 2) {
-                rankElement.innerText = `${i + 1}rd`;
-            }  else {
-                rankElement.innerText = `${i + 1}th`;
-                rankElement.style.color = "black";
-                scoreElement.style.color = "black";
-                nameElement.style.color = "black";
-            }
-
-            // Move Avatar Element and change z-index
-            avatarElement = sortedPlayers[i].avatarElement
-            avatarElement.style.left = `${33 + 1171 * (sortedPlayers[i].score / maxScore)}px`
-            avatarElement.style.zIndex = `${8 - i}`
-
-            // Score Bar Width 
-            barElement = sortedPlayers[i].barElement
-            barElement.style.width = `${1171 * (sortedPlayers[i].score / maxScore)}px`
-            barElement.style.zIndex = i
-        }
-    }
-
-    // IPC State
-    if (ipcState != data.tourney.manager.ipcState) ipcState = data.tourney.manager.ipcState
-    if (ipcState == 1) {
-        if (!resetScores) {
-            // Reset Scores
-            for (let i = 0; i < currentPlayers.length; i++) {
-                for (let j = 0; j < data.tourney.ipcClients.length; j++) {
-                    if (currentPlayers[i].userID == data.tourney.ipcClients[j].spectating.userID) {
-                        currentPlayers[i].score = 0
-                        playerScoreAnimation[`player${i}Score`].update(currentPlayers[i].score)
-
-                        rankElement = currentPlayers[i].rankElement
-                        rankElement.innerText = ""
-                        break
-                    }
-                }
-            }
-            resetScores = true
-        }
-    } else if (ipcState == 3) {
-
-    } else if (ipcState == 4) {
-        resetScores = false
-    }
 }
 
 // let data = {
@@ -559,7 +590,7 @@ socket.onmessage = event => {
 //                     name: 'DeadRote'
 //                 },
 //                 gameplay: {
-//                     score: 30000
+//                     score: 3000000
 //                 }
 //             },
 //             {
