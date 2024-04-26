@@ -506,11 +506,17 @@ socket.onmessage = event => {
  
              console.log(scoreElement);
              if (i == 0) {
+                 let oldCrown = document.getElementById("crownedPlayer");
+                 if(oldCrown) {
+                    oldCrown.remove();
+                 }
+
                  rankElement.innerText = "1st"
                  rankElement.style.color = "white"
                  scoreElement.style.color = "white";
                  nameElement.style.color = "white";
                  let firstPlaceCrown = document.createElement("img");
+                 firstPlaceCrown.setAttribute("id", "crownedPlayer");
                  firstPlaceCrown.src = "static/crown.png" 
                  firstPlaceCrown.style.width = "31px";
                  firstPlaceCrown.style.height = "19px";
