@@ -277,6 +277,7 @@ video { position: absolute; left: 0; top: 0; }
 .playerContainer {
     margin-left: 0px; 
     flex-grow: 1;
+    position: relative;
 }
 .playerContainerRight {  margin-right: 0px; }
 .playerWrapper { 
@@ -372,6 +373,12 @@ video { position: absolute; left: 0; top: 0; }
     border: 18px solid;
     transform: rotate(45deg)
 }
+
+#crownedPlayer {
+    top: calc(50% - 9.5px);
+}
+
+
 .triangle {
     position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) rotate(45deg);
     width: 18px; height: 18px;
@@ -390,12 +397,12 @@ video { position: absolute; left: 0; top: 0; }
 }
 /* Crown */
 #bottomCrown {
-    position: absolute; top: 120px; left: 1263px;
+    position: absolute; top: 120px; left: 1243px;
     width: 32px; height: 19px;
     transition: 0.2s ease-in-out;
 }
 #bottomCrownOverlay {
-    position: absolute; top: 114px; left: 1257.55px; 
+    position: absolute; top: 114px; left: 1237.55px; 
     width: 43.5px; height: 31px;
     transition: 0.2s ease-in-out;
 }

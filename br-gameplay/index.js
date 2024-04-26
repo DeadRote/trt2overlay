@@ -510,7 +510,6 @@ socket.onmessage = event => {
                  if(oldCrown) {
                     oldCrown.remove();
                  }
-
                  rankElement.innerText = "1st"
                  rankElement.style.color = "white"
                  scoreElement.style.color = "white";
@@ -521,7 +520,7 @@ socket.onmessage = event => {
                  firstPlaceCrown.style.width = "31px";
                  firstPlaceCrown.style.height = "19px";
                  firstPlaceCrown.style.position = "absolute";
-                 firstPlaceCrown.style.marginTop = "15px";
+                //  firstPlaceCrown.style.marginTop = "15px";
                  firstPlaceCrown.style.filter = "drop-shadow(0px 0px 8px #f1d912)";
                  if(sortedPlayers[i].scoreElement.classList.contains('playerContainerRight')) {
                     firstPlaceCrown.style.left = "-38px";
@@ -584,6 +583,8 @@ socket.onmessage = event => {
      } else if (ipcState == 4) {
          resetScores = false
      }
+
+     
 
 }
 
@@ -650,7 +651,7 @@ socket.onmessage = event => {
 //                     name: 'mrekk'
 //                 },
 //                 gameplay: {
-//                     score: 100000
+//                     score: 10000000
 //                 }
 //             },
 //             {
@@ -670,3 +671,9 @@ socket.onmessage = event => {
 //         }
 //     }
 // }
+
+// function test(data) {
+    
+// }
+
+// test(data);
