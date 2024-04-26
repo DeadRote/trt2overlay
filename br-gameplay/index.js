@@ -106,11 +106,13 @@ let commentatorName2 = document.getElementById("commentatorName2")
 let ipcState
 let resetScores
 
-
 let calculateLength = (length) => {
-    let result;
     let minutes = parseInt(Math.floor(length/1000/60));
     let seconds = parseInt(Math.round((length/1000) - (minutes*60)));
+    if(seconds === 60){
+        minutes += 1;
+        seconds = 0;
+    }
     if(seconds < 10) seconds = seconds.toString() + '0';
     return `${minutes}:${seconds}`;
 }
