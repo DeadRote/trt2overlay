@@ -503,7 +503,7 @@ socket.onmessage = event => {
                 nameElement.style.color = "white";
             } else if(i == 1) {
                 rankElement.innerText = `${i + 1}nd`;
-            } else if(i == 1) {
+            } else if(i == 2) {
                 rankElement.innerText = `${i + 1}rd`;
             }  else {
                 rankElement.innerText = `${i + 1}th`;
