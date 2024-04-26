@@ -450,6 +450,7 @@ socket.onmessage = event => {
             barDiv.style.width = "0px"
             currentPlayers[i].barElement = barDiv
             lowerBars.append(barDiv)
+            profilePictureDiv.style.backgroundImage = `url("https://a.ppy.sh/${currentPlayers[i].userID}")`
         }
     }
 
@@ -500,7 +501,11 @@ socket.onmessage = event => {
                 rankElement.style.color = "white"
                 scoreElement.style.color = "white";
                 nameElement.style.color = "white";
-            } else {
+            } else if(i == 1) {
+                rankElement.innerText = `${i + 1}nd`;
+            } else if(i == 1) {
+                rankElement.innerText = `${i + 1}rd`;
+            }  else {
                 rankElement.innerText = `${i + 1}th`;
                 rankElement.style.color = "black";
                 scoreElement.style.color = "black";
