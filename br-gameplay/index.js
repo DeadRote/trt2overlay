@@ -113,7 +113,7 @@ let calculateLength = (length) => {
         minutes += 1;
         seconds = 0;
     }
-    if(seconds < 10) seconds = seconds.toString() + '0';
+    if(seconds < 10) seconds = '0' + seconds.toString();
     return `${minutes}:${seconds}`;
 }
 
